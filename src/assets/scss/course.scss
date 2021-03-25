@@ -1,0 +1,179 @@
+@import '@/assets/scss/_variables.scss';
+
+.course_main {
+    position: relative;
+    background-color: #f5f8f8;
+    .course_left {
+        width: 75%;
+    }
+    .course_right {
+        top: 0;
+        width: 25%;
+        height: 100%;
+        font-size: 14px;
+    }
+    .course_item_parent {
+        width: 100%;
+        height: 100%;
+        background-color: #f5f8f8;
+    }
+    .course_item {
+        position: relative;
+        padding: 0;
+        padding-top: 15px;
+        padding-bottom: 10px;
+        padding-left: 13px;
+        min-height: 60px;
+        cursor: pointer;
+        &:not(:last-child) {
+            .course_item_station {
+                &::before {
+                    position: absolute;
+                    bottom: -68px;
+                    z-index: 2;
+                    display: inline-block;
+                    margin-left: -2px;
+                    width: 5px;
+                    height: 68px;
+                    background-color: currentColor;
+                    content: '';
+                }
+            }
+        }
+        &:nth-child(odd) {
+            background-color: #ebf0f1;
+        }
+        &:hover {
+            background-color: #ccc;
+        }
+        &.active {
+            background-color: #ccc;
+        }
+    }
+    .course_item_station {
+        position: relative;
+        position: relative;
+        top: -1px;
+        z-index: 3;
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-width: 4px;
+        border-style: solid;
+        border-radius: 32px;
+        background-color: #fff;
+        text-align: center;
+        font-weight: bold;
+        font-size: 15px;
+        transform: scale(.8);
+        .course_item_number {
+            position: relative;
+            display: block;
+            color: #4a4a4a;
+            font-weight: bold;
+        }
+    }
+    .course_item_name {
+        position: relative;
+        top: 4px;
+        display: inline-block;
+        overflow: hidden;
+        margin-right: 3px;
+        margin-left: 8px;
+        width: 79%;
+        color: #4a4a4a;
+        vertical-align: top;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        a {
+            color: inherit;
+        }
+    }
+    .course_top {
+        padding-left: 18px;
+        height: 30px;
+        background: #3d3d3d;
+        color: #fff;
+        font-size: 12px;
+        line-height: 30px;
+        .course_top_left {
+            display: inline-block;
+            width: 35px;
+        }
+        .course_top_station {
+            display: inline-block;
+            width: auto;;
+        }
+        .course_top_transfer {
+            display: inline-block;
+            margin-left: 9px;;
+        }
+    }
+    .course_title {
+        position: relative;
+        padding: 0 20px;
+        padding-top: 13px;
+        padding-bottom: 11px;
+        background-color: #dfe4e5;
+        h1 {
+            position: relative;
+            top: 4px;
+            margin-left: 6px;
+            color: #3d3d3d;
+            font-size: 21px;
+        }
+        p {
+            margin-top: 10px;
+            color: #3d3d3d;
+            font-size: 15px;
+        }
+        button {
+            margin-left: 5px;
+        }
+    }
+    .course_movie {
+        width: 100%;
+        background-color: black;
+    }
+    .course_movie_inner {
+        margin: 0 auto;
+        max-width: 700px;
+        width: 80%;
+    }
+    .course_info {
+        min-height: 500px;
+        background-color: #fff;
+    }
+
+    .info_content {
+        padding: 0 25px;
+        padding-bottom: 25px;
+        color: #4a4a4a;
+        a:hover {
+            color: $primary;
+            text-decoration: underline;
+        }
+    }
+    .master {
+        left: 0!important;
+        float: left !important;
+        .course_movie_inner {
+            right: 0!important;
+        }
+    }
+    .secondary {
+        right: 0!important;
+        float: right !important;
+        .course_movie_inner {
+            left: 0!important;
+        }
+    }
+    @media screen and (max-width: $desktop) {
+        .course_left {
+            width: 100%;
+        }
+        .course_right {
+            width: 100%;
+        }
+    }
+}
