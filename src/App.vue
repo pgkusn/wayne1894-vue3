@@ -12,7 +12,7 @@
 
 <script>
 import HeaderBlock from '@/components/Header/Header.vue';
-import LoginModal from '@/components/LoginModal.vue';
+import LoginModal from '@/components/LoginModal/LoginModal.vue';
 
 export default {
     components: {

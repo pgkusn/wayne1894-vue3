@@ -8,7 +8,7 @@
                     </a>
                 </p>
                 <p class="control">
-                    <a href class="button is-rounded is-small" @click.prevent="setModal('registration')">
+                    <a href class="button is-rounded is-small" @click.prevent="setModal('register')">
                         <span>註冊</span>
                     </a>
                 </p>
