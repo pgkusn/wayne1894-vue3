@@ -29,6 +29,7 @@ app.post(API.member.login.url, async (req, res) => {
         email: '[user@example.com]',
         displayName: 'Kenge',
         idToken: '[ID_TOKEN]',
+        // idToken: '[OLD_ID_TOKEN]',
         registered: true,
         refreshToken: '[REFRESH_TOKEN]',
         expiresIn: '3600'
@@ -84,29 +85,56 @@ app.post(API.member.registered.url, async (req, res) => {
 
 // 取得會員資料
 app.get(API.member.getMemberInfo.url, async (req, res) => {
-    await sleep(2000);
-    res.status(200);
-    res.json({
-        name: '王小明',
-        email: 'wayne1894.teach@gmail.com',
-        picture: 'https://bulma.io/images/placeholders/128x128.png',
-        favorite: {
-            '-M7CgU5r4tKOoVQXjT4c': false,
-            '-M7Ceyp-S3Btf3OSuAc9': true
-        }
-    });
+    if (req.query.auth === '[OLD_ID_TOKEN]') {
+        await sleep(2000);
+        res.status(401);
+        res.end();
+    }
+    else {
+        await sleep(2000);
+        res.status(200);
+        res.json({
+            name: '王小明',
+            email: 'wayne1894.teach@gmail.com',
+            picture: 'https://bulma.io/images/placeholders/128x128.png',
+            favorite: {
+                '-M7CgU5r4tKOoVQXjT4c': false,
+                '-M7Ceyp-S3Btf3OSuAc9': true
+            }
+        });
+    }
 });
 
 // 新增/修改會員資料
 app.patch(API.member.patchMemberInfo.url, async (req, res) => {
-    console.log(req.body);
+    if (req.query.auth === '[OLD_ID_TOKEN]') {
+        await sleep(2000);
+        res.status(401);
+        res.end();
+    }
+    else {
+        await sleep(2000);
+        res.status(200);
+        res.json({
+            favorite: {
+                '-M7CgU5r4tKOoVQXjT4c': false,
+                '-M7Ceyp-S3Btf3OSuAc9': true
+            }
+        });
+    }
+});
+
+// 更新 token
+app.post(API.member.exchangeToken.url, async (req, res) => {
     await sleep(2000);
     res.status(200);
     res.json({
-        favorite: {
-            '-M7CgU5r4tKOoVQXjT4c': false,
-            '-M7Ceyp-S3Btf3OSuAc9': true
-        }
+        expires_in: '3600',
+        token_type: 'Bearer',
+        refresh_token: '[REFRESH_TOKEN]',
+        id_token: '[NEW_ID_TOKEN]',
+        user_id: 'tRcfmLH7o2XrNELi...',
+        project_id: '1234567890'
     });
 });
 

@@ -1,17 +1,19 @@
 <template>
-    <section class="hero is-light">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title">
-                    我的收藏
-                </h1>
-                <h2 class="subtitle">
-                    Primary bold subtitle
-                </h2>
+    <div>
+        <section class="hero is-light">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <h1 class="title">
+                        我的收藏
+                    </h1>
+                    <h2 class="subtitle">
+                        Primary bold subtitle
+                    </h2>
+                </div>
             </div>
-        </div>
-    </section>
-    <CourseList :courses="favoriteCourses"></CourseList>
+        </section>
+        <CourseList :courses="favoriteCourses"></CourseList>
+    </div>
 </template>
 
 <script>
@@ -57,7 +59,3 @@ export default {
     }
 };
 </script>
-
-<style>
-
-</style>

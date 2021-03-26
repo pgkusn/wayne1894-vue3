@@ -1,7 +1,7 @@
 <template>
     <HeaderBlock></HeaderBlock>
 
-    <transition name="layout">
+    <transition name="layout" mode="out-in">
         <router-view/>
     </transition>
 

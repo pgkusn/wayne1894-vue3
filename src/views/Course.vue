@@ -126,15 +126,13 @@ export default {
         });
 
         onMounted(async () => {
-            const promises = [
-                store.dispatch('course/getCourseItem', route.params.id),
-                store.dispatch('member/getMemberInfo')
-            ];
-
+            const promises = [store.dispatch('course/getCourseItem', route.params.id)];
             if (!courses.value.length) {
                 promises.push(store.dispatch('course/getCourses'));
             }
-
+            if (loginInfo.value.localId) {
+                promises.push(store.dispatch('member/getMemberInfo'));
+            }
             const result = await Promise.all(promises);
 
             currentCourse.value = courses.value.filter(course => course.id === route.params.id)[0];
@@ -144,7 +142,7 @@ export default {
 
             courseItem.value = result[0].item;
 
-            favorite.value = result[1].favorite || {};
+            favorite.value = result[1]?.favorite || {};
             isFavorite.value = favorite.value[currentCourse.value.id];
         });
 

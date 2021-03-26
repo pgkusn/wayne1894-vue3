@@ -62,7 +62,7 @@ export default {
             get: () => store.state.member.loginInfo,
             set: value => {
                 if (value) {
-                    store.dispatch('member/setLoginInfoHandler', value);
+                    store.dispatch('member/setLoginInfoFromCookie', value);
                 }
             }
         });
