@@ -31,37 +31,10 @@ export default {
         setModalHandler ({ commit }, type) {
             commit('setModalType', type);
         },
-        setLoginInfoFromCookie ({ commit }, payload) {
-            commit('setLoginInfo', payload);
-        },
-        async login ({ commit }, { email, password }) {
-            try {
-                const { method, url } = API.member.login;
-                const { data } = await firebaseApi({
-                    method,
-                    url,
-                    data: {
-                        email,
-                        password,
-                        returnSecureToken: true
-                    }
-                });
-                commit('setLoginInfo', data);
-                cookies.set('loginInfo', data);
-                return data;
-            }
-            catch (error) {
-                switch (error.response.data.error.message) {
-                case 'EMAIL_NOT_FOUND':
-                    alert('Email 不存在');
-                    break;
-                case 'INVALID_PASSWORD':
-                    alert('密碼錯誤');
-                    break;
-                default:
-                    alert('登入失敗');
-                    break;
-                }
+        setLoginInfoFromCookie ({ commit }) {
+            const loginInfo = cookies.get('loginInfo');
+            if (loginInfo) {
+                commit('setLoginInfo', loginInfo);
             }
         },
         async register (context, { email, password }) {
@@ -92,6 +65,40 @@ export default {
                 }
             }
         },
+        async login ({ commit, dispatch }, { email, password }) {
+            try {
+                const { method, url } = API.member.login;
+                const { data } = await firebaseApi({
+                    method,
+                    url,
+                    data: {
+                        email,
+                        password,
+                        returnSecureToken: true
+                    }
+                });
+
+                commit('setLoginInfo', data);
+                cookies.set('loginInfo', data);
+
+                dispatch('getMemberInfo', data);
+
+                return data;
+            }
+            catch (error) {
+                switch (error.response.data.error.message) {
+                case 'EMAIL_NOT_FOUND':
+                    alert('Email 不存在');
+                    break;
+                case 'INVALID_PASSWORD':
+                    alert('密碼錯誤');
+                    break;
+                default:
+                    alert('登入失敗');
+                    break;
+                }
+            }
+        },
         logout ({ commit }) {
             commit('setLoginInfo', {});
             commit('setFavorite', {});
@@ -105,14 +112,16 @@ export default {
                     method,
                     url: `${url.replace(':user_id', localId)}?auth=${idToken}`
                 });
-                commit('setFavorite', data.favorite);
-                return data;
+                if (data) {
+                    commit('setFavorite', data.favorite);
+                }
+                return data || {};
             }
             catch (error) {
                 if (error.response.status === 401) {
                     const result = await dispatch('exchangeToken');
                     if (result) {
-                        dispatch('getMemberInfo');
+                        dispatch('getMemberInfo', state.loginInfo);
                     }
                 }
                 else {
@@ -120,14 +129,14 @@ export default {
                 }
             }
         },
-        async patchMemberInfo ({ state, commit, dispatch }, payload) {
+        async patchMemberInfo ({ state, commit, dispatch }, memberInfo) {
             try {
                 const { method, url } = API.member.patchMemberInfo;
                 const { localId, idToken } = state.loginInfo;
                 const { data } = await axios({
                     method,
                     url: `${url.replace(':user_id', localId)}?auth=${idToken}`,
-                    data: payload
+                    data: memberInfo
                 });
                 commit('setFavorite', data.favorite);
                 return data;
@@ -136,7 +145,7 @@ export default {
                 if (error.response.status === 401) {
                     const result = await dispatch('exchangeToken');
                     if (result) {
-                        dispatch('patchMemberInfo');
+                        dispatch('patchMemberInfo', memberInfo);
                     }
                 }
                 else {
@@ -156,6 +165,7 @@ export default {
                     }
                 });
 
+                // update login info
                 const newLoginInfo = JSON.parse(JSON.stringify(state.loginInfo));
                 for (const key in newLoginInfo) {
                     if (Object.hasOwnProperty.call(newLoginInfo, key)) {
@@ -164,7 +174,6 @@ export default {
                         newLoginInfo.refreshToken = data.refresh_token;
                     }
                 }
-
                 commit('setLoginInfo', newLoginInfo);
                 cookies.set('loginInfo', newLoginInfo);
 

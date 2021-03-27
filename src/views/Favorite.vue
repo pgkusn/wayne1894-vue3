@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { onMounted, computed } from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 import CourseList from '@/components/CourseList.vue';
 
@@ -30,6 +30,10 @@ export default {
         const store = useStore();
 
         const courses = computed(() => store.getters['course/courses']);
+        if (!courses.value.length) {
+            store.dispatch('course/getCourses');
+        }
+
         const favorite = computed(() => store.state.member.favorite);
         const favoriteCourses = computed(() => {
             const temp = [];
@@ -43,14 +47,6 @@ export default {
                 }
             }
             return temp;
-        });
-
-        onMounted(() => {
-            const promises = [store.dispatch('member/getMemberInfo')];
-            if (!courses.value.length) {
-                promises.push(store.dispatch('course/getCourses'));
-            }
-            Promise.all(promises);
         });
 
         return {

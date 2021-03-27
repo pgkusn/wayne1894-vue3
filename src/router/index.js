@@ -15,7 +15,7 @@ const routes = [
         name: 'Favorite',
         component: Favorite,
         beforeEnter: (to, from, next) => {
-            if (store.state.member.loginInfo) {
+            if (store.state.member.loginInfo.localId) {
                 next();
             }
             else {

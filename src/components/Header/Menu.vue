@@ -42,7 +42,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
-import cookies from '@/modules/cookies';
 
 export default {
     name: 'Menu',
@@ -58,17 +57,9 @@ export default {
         };
 
         // member
-        const loginInfo = computed({
-            get: () => store.state.member.loginInfo,
-            set: value => {
-                if (value) {
-                    store.dispatch('member/setLoginInfoFromCookie', value);
-                }
-            }
-        });
-        loginInfo.value = cookies.get('loginInfo');
-        const logout = () => {
-            store.dispatch('member/logout');
+        const loginInfo = computed(() => store.state.member.loginInfo);
+        const logout = async () => {
+            await store.dispatch('member/logout');
             if (route.name === 'Favorite') {
                 router.replace({ name: 'Home' });
             }

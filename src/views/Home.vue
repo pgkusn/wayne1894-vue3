@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 import CourseList from '@/components/CourseList.vue';
 
@@ -19,12 +19,9 @@ export default {
 
         const loading = computed(() => store.state.loading);
         const courses = computed(() => store.getters['course/courses']);
-
-        onMounted(() => {
-            if (!courses.value.length) {
-                store.dispatch('course/getCourses');
-            }
-        });
+        if (!courses.value.length) {
+            store.dispatch('course/getCourses');
+        }
 
         return {
             loading,

@@ -7,7 +7,7 @@
                     <button
                         :class="['button', 'is-pulled-right', { 'is-link': isFavorite }]"
                         v-if="loginInfo.localId"
-                        @click="isFavorite = !isFavorite"
+                        @click="setFavorite"
                     >
                         <span class="icon">
                             <i class="far fa-heart"></i>
@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import { onMounted, ref, computed, watch } from 'vue';
+import { onMounted, ref, computed, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -113,37 +113,41 @@ export default {
             return tab === '1' ? currentCourse.value.introduction : currentCourseItem.value.info;
         });
 
-        const loginInfo = computed(() => store.state.member.loginInfo);
-
         // favorite
-        const favorite = ref({});
-        const isFavorite = ref(null);
-        watch(isFavorite, (val, oldVal) => {
-            if (oldVal === null) return;
-            const newFavorite = JSON.parse(JSON.stringify(favorite.value));
-            newFavorite[currentCourse.value.id] = val;
-            store.dispatch('member/patchMemberInfo', { favorite: newFavorite });
+        const loginInfo = computed(() => store.state.member.loginInfo);
+        const favorite = computed(() => store.state.member.favorite);
+        const isFavorite = ref(false);
+        const stop = watchEffect(() => {
+            isFavorite.value = favorite.value[currentCourse.value.id];
         });
+        const setFavorite = () => {
+            stop();
+
+            isFavorite.value = !isFavorite.value;
+
+            // update member info
+            const newFavorite = JSON.parse(JSON.stringify(favorite.value));
+            newFavorite[currentCourse.value.id] = isFavorite.value;
+            store.dispatch('member/patchMemberInfo', {
+                email: loginInfo.value.email,
+                favorite: newFavorite
+            });
+        };
 
         onMounted(async () => {
-            const promises = [store.dispatch('course/getCourseItem', route.params.id)];
-            if (!courses.value.length) {
-                promises.push(store.dispatch('course/getCourses'));
-            }
-            if (loginInfo.value.localId) {
-                promises.push(store.dispatch('member/getMemberInfo'));
-            }
-            const result = await Promise.all(promises);
+            // get data
+            const promise1 = store.dispatch('course/getCourseItem', route.params.id);
+            const promise2 = courses.value.length ? null : store.dispatch('course/getCourses');
+            const result = await Promise.all([promise1, promise2]);
 
+            // set currentCourse
             currentCourse.value = courses.value.filter(course => course.id === route.params.id)[0];
             if (!currentCourse.value) {
                 router.replace({ name: 'Home' });
             }
 
+            // set courseItem
             courseItem.value = result[0].item;
-
-            favorite.value = result[1]?.favorite || {};
-            isFavorite.value = favorite.value[currentCourse.value.id];
         });
 
         return {
@@ -155,7 +159,8 @@ export default {
             currentCourseItem,
             infoContent,
             isFavorite,
-            loginInfo
+            loginInfo,
+            setFavorite
         };
     }
 };
