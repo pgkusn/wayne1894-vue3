@@ -33,16 +33,16 @@
                 <div class="course_info">
                     <div class="tabs is-fullwidth">
                         <ul>
-                            <li :class="{ 'is-active': route.query.tab === '1' || !route.query.tab }">
-                                <router-link :to="{ query: { item: route.query.item , tab: 1 } }" replace>
+                            <li :class="{ 'is-active': $route.query.tab === '1' || !$route.query.tab }">
+                                <router-link :to="{ query: { item: $route.query.item , tab: 1 } }" replace>
                                     <span class="icon">
                                         <i class="far fa-file-alt" aria-hidden="true"></i>
                                     </span>
                                     <span>課程介紹</span>
                                 </router-link>
                             </li>
-                            <li :class="{ 'is-active': route.query.tab === '2' }">
-                                <router-link :to="{ query: { item: route.query.item , tab: 2 } }" replace>
+                            <li :class="{ 'is-active': $route.query.tab === '2' }">
+                                <router-link :to="{ query: { item: $route.query.item , tab: 2 } }" replace>
                                     <span class="icon">
                                         <i class="fas fa-bolt" aria-hidden="true"></i>
                                     </span>
@@ -144,6 +144,7 @@ export default {
             currentCourse.value = courses.value.filter(course => course.id === route.params.id)[0];
             if (!currentCourse.value) {
                 router.replace({ name: 'Home' });
+                return;
             }
 
             // set courseItem
@@ -151,7 +152,6 @@ export default {
         });
 
         return {
-            route,
             currentCourse,
             courseItem,
             selectCourseItem,
